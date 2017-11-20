@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <link rel="stylesheet" href="./css/style.css">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
@@ -10,8 +11,18 @@
 <body>
     <canvas id="drawCanvas" width=300 height=300></canvas>
     <div id=actions class="actions">
-        <button id=eraser>橡皮擦</button>
-        <button id=brush>画笔</button>
+            <svg id="pen" class="icon active" aria-hidden="true">
+                <use xlink:href="#icon-pen"></use>
+            </svg>
+            <svg id="eraser" class="icon" aria-hidden="true">
+                    <use xlink:href="#icon-eraser"></use>
+            </svg>
+            <svg id="save" class="icon" aria-hidden="true">
+                    <use xlink:href="#icon-save"></use>
+            </svg>
+            <svg id="colorBar" class="icon" aria-hidden="true">
+                    <use xlink:href="#icon-yanse"></use>
+            </svg>
     </div>
     <script>
         var yyy = document.getElementById('drawCanvas');
@@ -23,15 +34,16 @@
         //检测鼠标的使用情况
         listenToUser(yyy)
 
-        //关于定义底部的橡皮擦的状态用于区分橡皮擦是否会被使用
         var eraserEnabled = false
-        eraser.onclick = function () {
-            eraserEnabled = true
-            actions.className = 'actions x'
-        }
-        brush.onclick = function () {
+        pen.onclick = function(){
             eraserEnabled = false
-            actions.className = 'actions'
+            pen.classList.add('active')
+            eraser.classList.remove('active')
+        }
+        eraser.onclick = function(){
+            eraserEnabled = true
+            eraser.classList.add('active')
+            pen.classList.remove('active')
         }
 
         /***局部变量的 具体过程***/
@@ -101,7 +113,7 @@
                         lastPoint = newPoint
                     }
                 }
-                canvas.ontouchend = function (aaa ) {
+                canvas.ontouchend = function (aaa) {
                     using = false
                 }
             } else {
