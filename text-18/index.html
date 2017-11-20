@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <link rel="stylesheet" href="./css/style.css">
+    <title>画板</title>
+</head>
+<body>
+    <canvas id="drawCanvas" width=300 height=300></canvas>
+    <div id=actions class="actions">
+        <button id=eraser>橡皮擦</button>
+        <button id=brush>画笔</button>
+    </div>
+    <script>
+        var yyy = document.getElementById('drawCanvas');
+        var context = yyy.getContext('2d');
+        
+        // 窗口的检测以及画板的最大化
+        autoSetCanvasSize(yyy)
+        
+        //检测鼠标的使用情况
+        listenToMouse(yyy)
+        
+        //关于定义底部的橡皮擦的状态用于区分橡皮擦是否会被使用
+        var eraserEnabled = false
+        eraser.onclick = function() {
+            eraserEnabled =true
+            actions.className = 'actions x'
+        }
+            brush.onclick = function(){
+            eraserEnabled = false
+            actions.className = 'actions'
+        }
+
+        /***局部变量的 具体过程***/
+        //关于窗口的设定
+        function autoSetCanvasSize(canvas) {
+            setCanvasSize()
+            window.onresize = function() {
+                    setCanvasSize()
+                }
+            function setCanvasSize() {
+                var pageWidth = document.documentElement.clientWidth
+                var pageHeight = document.documentElement.clientHeight
+            
+                canvas.width = pageWidth
+                canvas.height = pageHeight
+            }
+        }
+        
+        function drawLine(x1, y1, x2, y2) {
+        context.beginPath();
+        context.strokeStyle = 'black'
+        context.moveTo(x1, y1) // 起点
+        context.lineWidth = 5
+        context.lineTo(x2, y2) // 终点
+        context.stroke()
+        context.closePath()
+        }
+        
+        function listenToMouse(canvas) {
+        
+        
+        var using = false
+        var lastPoint = {
+            x: undefined,
+            y: undefined
+        }
+        canvas.onmousedown = function(aaa) {
+            var x = aaa.clientX
+            var y = aaa.clientY
+            using = true
+            if (eraserEnabled) {
+                context.clearRect(x - 5, y - 5, 10, 10)
+                } else {
+                lastPoint = {
+                    "x": x,
+                    "y": y
+                }
+            }
+        }
+        canvas.onmousemove = function(aaa) {
+            var x = aaa.clientX
+            var y = aaa.clientY
+        
+            if (!using) {return}
+            
+            if (eraserEnabled) {
+                context.clearRect(x - 5, y - 5, 10, 10)
+            } else {
+                var newPoint = {
+                    "x": x,
+                    "y": y
+                }
+                drawLine(lastPoint.x, lastPoint.y, newPoint.x, newPoint.y)
+                    lastPoint = newPoint
+            }
+        }
+        canvas.onmouseup = function(aaa) {
+            using = false
+            }
+        }
+    </script>
+</body>
+</html>
